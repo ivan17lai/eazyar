@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR.js Custom Marker Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.1/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        #camera-feed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- AR.js 和 A-Frame 的場景 -->
+    <a-scene embedded arjs>
+        <!-- 自定義標記 -->
+        <a-marker type="pattern" url="/Users/yihuan/Downloads/pattern-marker.patt">
+            <!-- 顯示圖片 -->
+            <a-image src="/Users/yihuan/Desktop/截圖 2024-01-15 下午1.58.31.png" width="1" height="1" position="0 0.5 0"></a-image>
+
+        </a-marker>
+
+        <!-- 相機 -->
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        // 這裡你可以修改 JavaScript 以增加更多互動功能
+    </script>
+</body>
+</html>
