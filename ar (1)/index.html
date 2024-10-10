@@ -5,24 +5,33 @@
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+        <script src="https://www.youtube.com/iframe_api"></script>
 
         <script>
-            AFRAME.registerComponent('videohandler', {
-                init: function () {
-                    var marker = this.el;
-                    this.vid = document.querySelector("#vid");
+            var player;
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('vid', {
+                    events: {
+                        'onReady': onPlayerReady,
+                    }
+                });
+            }
 
-                    marker.addEventListener('markerFound', function () {
-                        this.toggle = true;
-                        this.vid.play();
-                    }.bind(this));
+            function onPlayerReady(event) {
+                AFRAME.registerComponent('videohandler', {
+                    init: function () {
+                        var marker = this.el;
 
-                    marker.addEventListener('markerLost', function () {
-                        this.toggle = false;
-                        this.vid.pause();
-                    }.bind(this));
-                },
-            });
+                        marker.addEventListener('markerFound', function () {
+                            player.playVideo();
+                        });
+
+                        marker.addEventListener('markerLost', function () {
+                            player.pauseVideo();
+                        });
+                    },
+                });
+            }
         </script>
     </head>
 
@@ -36,8 +45,8 @@
             gesture-detector
         >
             <a-assets>
-                <!-- YouTube影片的iframe嵌入 -->
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/3PFhlQH4A2M?si=kb39NxX8vlQxfBV8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <!-- YouTube iframe -->
+                <div id="vid"></div>
             </a-assets>
 
             <a-marker
