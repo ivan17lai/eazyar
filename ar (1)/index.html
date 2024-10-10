@@ -5,6 +5,7 @@
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
+
         <script>
             AFRAME.registerComponent('videohandler', {
                 init: function () {
@@ -35,18 +36,8 @@
             gesture-detector
         >
             <a-assets>
-                <video
-                    id="vid"
-                    src="https://drive.google.com/uc?export=download&id=14S4MQm2HIspoeYDK1z_nooedOa0KiaZK"
-                    preload="auto"
-                    response-type="arraybuffer"
-                    loop
-                    crossorigin
-                    webkit-playsinline
-                    autoplay
-                    muted
-                    playsinline
-                ></video>
+                <!-- YouTube影片的iframe嵌入 -->
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/3PFhlQH4A2M?si=kb39NxX8vlQxfBV8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </a-assets>
 
             <a-marker
@@ -63,14 +54,14 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerA"
             >
-                <a-video
-                    src="#vid"
-                    scale="1 1 1"
-                    position="0 0.1 0"
+                <a-entity
+                    geometry="primitive: plane; width: 1; height: 0.5625"
+                    material="shader: flat; src: #vid"
+                    position="0 0.5 0"
                     rotation="-90 0 0"
                     class="clickable"
                     gesture-handler
-                ></a-video>
+                ></a-entity>
             </a-marker>
 
             <a-entity camera></a-entity>
