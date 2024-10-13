@@ -5,37 +5,37 @@
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
         <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
-        <script src="https://www.youtube.com/iframe_api"></script>
-
         <script>
-            var player;
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('ytplayer', {
-                    events: {
-                        'onReady': onPlayerReady,
-                    }
-                });
-            }
+            AFRAME.registerComponent('videohandler', {
+                init: function () {
+                    var marker = this.el;
+                    this.vid = document.querySelector("#vid");
 
-            function onPlayerReady(event) {
-                AFRAME.registerComponent('videohandler', {
-                    init: function () {
-                        var marker = this.el;
+                    marker.addEventListener('markerFound', function () {
+                        this.toggle = true;
+                        this.vid.play();
+                    }.bind(this));
 
-                        marker.addEventListener('markerFound', function () {
-                            player.playVideo();  // 播放 YouTube 影片
-                        });
-
-                        marker.addEventListener('markerLost', function () {
-                            player.pauseVideo();  // 暫停 YouTube 影片
-                        });
-                    },
-                });
-            }
+                    marker.addEventListener('markerLost', function () {
+                        this.toggle = false;
+                        this.vid.pause();
+                    }.bind(this));
+                },
+            });
         </script>
     </head>
 
     <body style="margin: 0; overflow: hidden;">
+        <div style="display:block;">
+            <iframe
+                id="ytplayer"
+                type="text/html"
+                width="640"
+                height="360"
+                src="https://www.youtube.com/embed/YOUR_VIDEO_ID?enablejsapi=1"
+                frameborder="0"
+            ></iframe>
+        </div>
         <a-scene
             vr-mode-ui="enabled: false"
             loading-screen="enabled: false;"
@@ -45,17 +45,18 @@
             gesture-detector
         >
             <a-assets>
-                <!-- YouTube iframe -->
-                <div style="display:none;">
-                    <iframe
-                        id="ytplayer"
-                        type="text/html"
-                        width="640"
-                        height="360"
-                        src="https://www.youtube.com/embed/VzVV9DXVvPg?enablejsapi=1"
-                        frameborder="0"
-                    ></iframe>
-                </div>
+                <video
+                    id="vid"
+                    src="https://cors-anywhere.herokuapp.com/https://drive.usercontent.google.com/uc?id=14S4MQm2HIspoeYDK1z_nooedOa0KiaZK&export=download"
+                    preload="auto"
+                    response-type="arraybuffer"
+                    loop
+                    crossorigin
+                    webkit-playsinline
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
             </a-assets>
 
             <a-marker
@@ -72,12 +73,14 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerA"
             >
-                <a-plane
-                    scale="1 0.5625 1"
+                <a-video
+                    src="#vid"
+                    scale="1 1 1"
                     position="0 0.1 0"
                     rotation="-90 0 0"
-                    color="#000"
-                ></a-plane>
+                    class="clickable"
+                    gesture-handler
+                ></a-video>
             </a-marker>
 
             <a-entity camera></a-entity>
