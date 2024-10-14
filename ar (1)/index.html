@@ -26,16 +26,11 @@
     </head>
 
     <body style="margin: 0; overflow: hidden;">
-        <div style="display:block;">
-            <iframe
-                id="ytplayer"
-                type="text/html"
-                width="640"
-                height="360"
-                src="https://www.youtube.com/embed/YOUR_VIDEO_ID?enablejsapi=1"
-                frameborder="0"
-            ></iframe>
+        <div style="width: 600px; height: 400px; overflow: hidden; position: relative;" id="vid">
+            <iframe src="https://www.example.com" width="600" height="400" style="transform: skewY(10deg);">
+            </iframe>
         </div>
+        
         <a-scene
             vr-mode-ui="enabled: false"
             loading-screen="enabled: false;"
@@ -47,7 +42,7 @@
             <a-assets>
                 <video
                     id="vid"
-                    src="https://cors-anywhere.herokuapp.com/https://drive.usercontent.google.com/uc?id=14S4MQm2HIspoeYDK1z_nooedOa0KiaZK&export=download"
+                    src="https://drive.google.com/uc?export=download&id=14S4MQm2HIspoeYDK1z_nooedOa0KiaZK"
                     preload="auto"
                     response-type="arraybuffer"
                     loop
