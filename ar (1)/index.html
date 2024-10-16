@@ -3,23 +3,40 @@
     <head>
         <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
         <script>
             AFRAME.registerComponent('videohandler', {
                 init: function () {
                     var marker = this.el;
-                    var iframe = document.querySelector("#youtube-iframe");
+                    this.vid = document.getElementById("videoCanvas");
 
                     marker.addEventListener('markerFound', function () {
-                        iframe.style.display = "block";
-                    });
+                        this.toggle = true;
+                        this.vid.play();
+                    }.bind(this));
 
                     marker.addEventListener('markerLost', function () {
-                        iframe.style.display = "none";
-                    });
+                        this.toggle = false;
+                        this.vid.pause();
+                    }.bind(this));
                 },
             });
+
+            window.onload = function () {
+                var canvas = document.getElementById("videoCanvas");
+                var ctx = canvas.getContext("2d");
+                var video = document.getElementById("videoElement");
+
+                video.play();
+                video.addEventListener('play', function () {
+                    var $this = this; // cache
+                    (function loop() {
+                        if (!$this.paused && !$this.ended) {
+                            ctx.drawImage($this, 0, 0, canvas.width, canvas.height);
+                            setTimeout(loop, 1000 / 30); // draw at 30fps
+                        }
+                    })();
+                }, 0);
+            }
         </script>
     </head>
 
@@ -28,45 +45,27 @@
             vr-mode-ui="enabled: false"
             loading-screen="enabled: false;"
             arjs='sourceType: webcam; debugUIEnabled: false;'
-            id="scene"
             embedded
-            gesture-detector
         >
-            <!-- Hidden YouTube iframe outside the AR scene -->
-            <div id="youtube-iframe" style="display: none; position: absolute; top: 20px; left: 20px;">
-                <iframe width="560" height="315" 
-                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" 
-                    title="YouTube video player" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-                </iframe>
-            </div>
+            <a-assets>
+                <!-- 隱藏的影片元素 -->
+                <video id="videoElement" src="https://www.w3schools.com/html/mov_bbb.mp4" preload="auto" crossorigin="anonymous" webkit-playsinline playsinline></video>
+            </a-assets>
 
-            <a-assets></a-assets>
+            <!-- 用來繪製影片的 Canvas -->
+            <canvas id="videoCanvas" width="640" height="360" style="display: none;"></canvas>
 
             <a-marker
-                type="pattern"
-                preset="custom"
-                url="assets/marker.patt"
+                preset="hiro"
                 videohandler
-                smooth="true"
-                smoothCount="10"
-                smoothTolerance="0.01"
-                smoothThreshold="5"
-                raycaster="objects: .clickable"
-                emitevents="true"
-                cursor="fuse: false; rayOrigin: mouse;"
-                id="markerA"
             >
-                <!-- Plane to display YouTube iframe material -->
+                <!-- 平面用來顯示影片 -->
                 <a-plane 
                     position="0 0.5 0" 
                     rotation="-90 0 0" 
-                    width="1.5" 
-                    height="0.85" 
-                    color="black" 
-                    gesture-handler>
+                    width="1" 
+                    height="0.56" 
+                    material="shader: canvas; src: #videoCanvas">
                 </a-plane>
             </a-marker>
 
