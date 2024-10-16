@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下載並播放影片</title>
+</head>
+<body>
+
+    <h1>下載 Google 雲端硬碟的影片</h1>
+    <a id="downloadLink" href="#" download>下載影片</a>
+
+    <h2>播放影片</h2>
+    <video id="videoPlayer" width="640" controls>
+        <source id="videoSource" src="" type="video/mp4">
+        您的瀏覽器不支援 video 標籤。
+    </video>
+
+    <script>
+        // 設置 Google 雲端硬碟 MP4 檔案的下載連結
+        const fileId = 'YOUR_FILE_ID'; // 替換為您的檔案 ID
+        const fileName = 'your_video.mp4'; // 替換為您想要的檔名
+
+        const downloadLink = document.getElementById('downloadLink');
+        const videoSource = document.getElementById('videoSource');
+        
+        // 設定下載連結
+        downloadLink.href = `https://drive.google.com/file/d/1OD5ybdhjmXRyOe1JkSoHxgddojgCUk8F/view?usp=sharing`;
+        downloadLink.download = fileName;
+
+        // 設定影片來源
+        videoSource.src = `https://drive.google.com/file/d/1OD5ybdhjmXRyOe1JkSoHxgddojgCUk8F/view?usp=sharing`;
+    </script>
+
+</body>
+</html>

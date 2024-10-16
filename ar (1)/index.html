@@ -3,11 +3,13 @@
     <head>
         <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
         <script>
             AFRAME.registerComponent('videohandler', {
                 init: function () {
                     var marker = this.el;
-                    this.vid = document.getElementById("videoCanvas");
+                    this.vid = document.querySelector("#vid");
 
                     marker.addEventListener('markerFound', function () {
                         this.toggle = true;
@@ -20,23 +22,6 @@
                     }.bind(this));
                 },
             });
-
-            window.onload = function () {
-                var canvas = document.getElementById("videoCanvas");
-                var ctx = canvas.getContext("2d");
-                var video = document.getElementById("videoElement");
-
-                video.play();
-                video.addEventListener('play', function () {
-                    var $this = this; // cache
-                    (function loop() {
-                        if (!$this.paused && !$this.ended) {
-                            ctx.drawImage($this, 0, 0, canvas.width, canvas.height);
-                            setTimeout(loop, 1000 / 30); // draw at 30fps
-                        }
-                    })();
-                }, 0);
-            }
         </script>
     </head>
 
@@ -45,28 +30,47 @@
             vr-mode-ui="enabled: false"
             loading-screen="enabled: false;"
             arjs='sourceType: webcam; debugUIEnabled: false;'
+            id="scene"
             embedded
+            gesture-detector
         >
             <a-assets>
-                <!-- 隱藏的影片元素 -->
-                <video id="videoElement" src="https://www.w3schools.com/html/mov_bbb.mp4" preload="auto" crossorigin="anonymous" webkit-playsinline playsinline></video>
+                <video
+                    id="vid"
+                    src="https://videos2.sendvid.com/d5/db/7dns1noo.mp4?validfrom=1729082898&validto=1729097298&rate=250k&ip=114.46.160.2&hash=YFWefhjhyhfQfnYdzb73iBaGl70%3D"
+                    preload="auto"
+                    response-type="arraybuffer"
+                    loop
+                    crossorigin
+                    webkit-playsinline
+                    autoplay
+                    muted
+                    playsinline
+                ></video>
             </a-assets>
 
-            <!-- 用來繪製影片的 Canvas -->
-            <canvas id="videoCanvas" width="640" height="360" style="display: none;"></canvas>
-
             <a-marker
-                preset="hiro"
+                type="pattern"
+                preset="custom"
+                url="assets/marker.patt"
                 videohandler
+                smooth="true"
+                smoothCount="10"
+                smoothTolerance="0.01"
+                smoothThreshold="5"
+                raycaster="objects: .clickable"
+                emitevents="true"
+                cursor="fuse: false; rayOrigin: mouse;"
+                id="markerA"
             >
-                <!-- 平面用來顯示影片 -->
-                <a-plane 
-                    position="0 0.5 0" 
-                    rotation="-90 0 0" 
-                    width="1" 
-                    height="0.56" 
-                    material="shader: canvas; src: #videoCanvas">
-                </a-plane>
+                <a-video
+                    src="#vid"
+                    scale="1 1 1"
+                    position="0 0.1 0"
+                    rotation="-90 0 0"
+                    class="clickable"
+                    gesture-handler
+                ></a-video>
             </a-marker>
 
             <a-entity camera></a-entity>
