@@ -9,28 +9,21 @@
             AFRAME.registerComponent('videohandler', {
                 init: function () {
                     var marker = this.el;
-                    this.vid = document.querySelector("#vid");
+                    var iframe = document.querySelector("#youtube-iframe");
 
                     marker.addEventListener('markerFound', function () {
-                        this.toggle = true;
-                        this.vid.play();
-                    }.bind(this));
+                        iframe.style.display = "block";
+                    });
 
                     marker.addEventListener('markerLost', function () {
-                        this.toggle = false;
-                        this.vid.pause();
-                    }.bind(this));
+                        iframe.style.display = "none";
+                    });
                 },
             });
         </script>
     </head>
 
     <body style="margin: 0; overflow: hidden;">
-        <div style="width: 600px; height: 400px; overflow: hidden; position: relative;" >
-            <iframe src="https://www.example.com" width="600" height="400" style="transform: skewY(10deg);" id="vid">
-            </iframe>
-        </div>
-        
         <a-scene
             vr-mode-ui="enabled: false"
             loading-screen="enabled: false;"
@@ -39,20 +32,18 @@
             embedded
             gesture-detector
         >
-            <a-assets>
-                <video
-                    id="vid"
-                    src="https://drive.google.com/uc?export=download&id=14S4MQm2HIspoeYDK1z_nooedOa0KiaZK"
-                    preload="auto"
-                    response-type="arraybuffer"
-                    loop
-                    crossorigin
-                    webkit-playsinline
-                    autoplay
-                    muted
-                    playsinline
-                ></video>
-            </a-assets>
+            <!-- Hidden YouTube iframe outside the AR scene -->
+            <div id="youtube-iframe" style="display: none; position: absolute; top: 20px; left: 20px;">
+                <iframe width="560" height="315" 
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <a-assets></a-assets>
 
             <a-marker
                 type="pattern"
@@ -68,18 +59,18 @@
                 cursor="fuse: false; rayOrigin: mouse;"
                 id="markerA"
             >
-                <a-video
-                    src="#vid"
-                    scale="1 1 1"
-                    position="0 0.1 0"
-                    rotation="-90 0 0"
-                    class="clickable"
-                    gesture-handler
-                ></a-video>
+                <!-- Plane to display YouTube iframe material -->
+                <a-plane 
+                    position="0 0.5 0" 
+                    rotation="-90 0 0" 
+                    width="1.5" 
+                    height="0.85" 
+                    color="black" 
+                    gesture-handler>
+                </a-plane>
             </a-marker>
 
             <a-entity camera></a-entity>
         </a-scene>
-        <script src="t.js"></script>
     </body>
 </html>
