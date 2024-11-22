@@ -8,7 +8,7 @@ CORS(app)
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'pattFile' not in request.files or 'videoFile' not in request.files:
-        return jsonify({'error': 'No file part'}), 400  # 返回 JSON 格式錯誤訊息
+        return jsonify({'error': 'No file part'}), 400
     
     patt_file = request.files['pattFile']
     video_file = request.files['videoFile']
@@ -35,27 +35,22 @@ def upload_file():
 def download_file():
     file_id = request.args.get('id')
     
-    # 确保有提供 file_id
     if not file_id:
         return jsonify({'error': 'Missing file ID'}), 400
 
     folder_path = f'./file/{file_id}'
 
-    # 检查文件夹是否存在
     if not os.path.exists(folder_path):
         return jsonify({'error': 'File not found'}), 404
 
-    # 用来存储文件的 URL
     file_urls = {}
 
-    # 遍历文件夹中的文件，查找 .mp4 和 .mptt 文件
     for file_name in os.listdir(folder_path):
         if file_name.endswith('.mp4'):
             file_urls['mp4'] = f'http://127.0.0.1:5000/get_file/{file_id}/{file_name}'
         elif file_name.endswith('.patt'):
             file_urls['mptt'] = f'http://127.0.0.1:5000/get_file/{file_id}/{file_name}'
 
-    # 如果没有找到对应的文件d
     if not file_urls:
         return jsonify({'error': 'Files not found'}), 404
 
