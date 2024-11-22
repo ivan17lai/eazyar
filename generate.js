@@ -56,10 +56,12 @@ THREEx.ArPatternFile.triggerDownload = function(patternFileString, fileName = 'p
     document.body.removeChild(domElement)
 }
 
-// 按鈕點擊事件
 document.querySelector('.next_button').addEventListener('click', function() {
     // 隱藏按鈕
     document.querySelector('.next_button').style.display = 'none';
+    document.querySelectorAll('.step').forEach(function(stepElement) {
+        stepElement.style.display = 'none';
+    });
 
     // 獲取圖片 URL
     var imgElement = document.querySelector('.tag_review');
@@ -67,8 +69,33 @@ document.querySelector('.next_button').addEventListener('click', function() {
     if (imgElement && imgElement.src) {
         // 使用 THREEx.ArPatternFile 生成 .patt 文件
         THREEx.ArPatternFile.encodeImageURL(imgElement.src, function(patternFileString) {
-            // 觸發下載 .patt 文件
-            THREEx.ArPatternFile.triggerDownload(patternFileString, 'generated-marker.patt');
+            // 創建一個 Blob 來代表 .patt 文件
+            var blob = new Blob([patternFileString], { type: 'text/plain' });
+            var pattFile = new File([blob], 'generated-marker.patt', { type: 'text/plain' });
+
+            // 構建 FormData 對象
+            var formData = new FormData();
+            formData.append('pattFile', pattFile);
+
+            // 獲取影片檔案
+            var videoInput = document.querySelector('.video_upload');
+            if (videoInput && videoInput.files.length > 0) {
+                formData.append('videoFile', videoInput.files[0]);
+            }
+            console.log(formData);  // 打印 FormData 內容
+
+            // 使用 Fetch API 將資料傳送至後端
+            fetch('http://127.0.0.1:5000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())  // 將回應解析為 JSON
+            .then(data => {
+                console.log('Success:', data);  // 打印 JSON 回應
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         });
     }
 });
