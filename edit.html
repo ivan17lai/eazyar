@@ -164,6 +164,25 @@
                 display: none;
             }
             
+
+            @media (max-width: 768px) {
+                .work {
+                    margin-top: 5%;
+                    flex-direction: column;
+                    display: flex;
+                    justify-content: start;
+                    align-items: center;
+                }
+
+                .step {
+                    width: 85%;
+                    margin: 3%;
+                    margin-top: 1%;
+                    padding: 5%;
+                }
+
+            }
+            
         </style>
     
     </head>
@@ -194,6 +213,20 @@
             <div class="step" id="s2">
                 <div class="step_info">
                     2.上傳你的影片
+                </div>
+                <div class="upload_block">
+                    <input class="video_upload" type="file" accept="video/*" style="display: none;"></input>
+                    <button class="upload_button" onclick="document.querySelector('.video_upload').click();">
+                        從電腦選擇檔案
+                    </button>
+                    <video class="video_review" style="display: none;"></video>
+                </div>
+                
+            </div>
+
+            <div class="step" id="s3" style="display: none;">
+                <div class="step_info">
+                    3.儲存連結
                 </div>
                 <div class="upload_block">
                     <input class="video_upload" type="file" accept="video/*" style="display: none;"></input>

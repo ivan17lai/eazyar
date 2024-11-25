@@ -69,33 +69,56 @@ document.querySelector('.next_button').addEventListener('click', function() {
     if (imgElement && imgElement.src) {
         // 使用 THREEx.ArPatternFile 生成 .patt 文件
         THREEx.ArPatternFile.encodeImageURL(imgElement.src, function(patternFileString) {
-            // 創建一個 Blob 來代表 .patt 文件
-            var blob = new Blob([patternFileString], { type: 'text/plain' });
-            var pattFile = new File([blob], 'generated-marker.patt', { type: 'text/plain' });
-
-            // 構建 FormData 對象
-            var formData = new FormData();
-            formData.append('pattFile', pattFile);
-
-            // 獲取影片檔案
-            var videoInput = document.querySelector('.video_upload');
-            if (videoInput && videoInput.files.length > 0) {
-                formData.append('videoFile', videoInput.files[0]);
+            try {
+                // 創建 .patt 文件 Blob 和 File
+                const blobPatt = new Blob([patternFileString], { type: 'text/plain' });
+                const pattFile = new File([blobPatt], 'generated-marker.patt', { type: 'text/plain' });
+    
+                // 下載圖片 Blob，生成圖片文件
+                fetch(imgElement.src)
+                    .then(response => response.blob())
+                    .then(blobImage => {
+                        const imageFile = new File([blobImage], 'marker-image.jpg', { type: blobImage.type });
+    
+                        // 構建 FormData 對象
+                        const formData = new FormData();
+                        formData.append('pattFile', pattFile); // 添加 .patt 文件
+                        formData.append('imageFile', imageFile); // 添加對應圖片檔案
+    
+                        // 獲取影片檔案
+                        const videoInput = document.querySelector('.video_upload');
+                        if (videoInput && videoInput.files.length > 0) {
+                            formData.append('videoFile', videoInput.files[0]);
+                        }
+    
+                        console.log(formData); // 檢查 FormData 內容
+    
+                        // 使用 Fetch API 傳送至後端
+                        fetch('http://127.0.0.1:5000/upload', {
+                            method: 'POST',
+                            body: formData
+                        })
+                            .then(response => {
+                                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Success:', data); // 處理伺服器回應
+                                document.querySelector('.step#s3').style.display = 'block';
+                            })
+                            .catch(error => {
+                                console.error('Error during upload:', error);
+                            });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching image:', error);
+                    });
+            } catch (error) {
+                console.error('Unexpected error:', error);
             }
-            console.log(formData);  // 打印 FormData 內容
-
-            // 使用 Fetch API 將資料傳送至後端
-            fetch('http://127.0.0.1:5000/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())  // 將回應解析為 JSON
-            .then(data => {
-                console.log('Success:', data);  // 打印 JSON 回應
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
         });
+    } else {
+        console.warn('Image element or source is missing.');
     }
+    
 });
